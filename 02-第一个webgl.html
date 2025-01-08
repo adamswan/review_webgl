@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+        let dom = document.querySelector('#myCanvas')
+
+        let ctx = dom.getContext('webgl')
+
+        // 正方形涂成红色
+        ctx.clearColor(1, 0, 0, 1)
+        ctx.clear(ctx.COLOR_BUFFER_BIT)
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+        let dom = document.querySelector('#myCanvas')
+
+        // 获取 2D 上下文
+        let ctx = dom.getContext('2d')
+
+        // 设置颜色并填充
+        ctx.fillStyle = 'pink'
+        ctx.fillRect(10, 10, 400, 400)
+    </script>
+</body>
+</html>

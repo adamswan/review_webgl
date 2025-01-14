@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      #myCanvas {
+        margin: 50px auto 0;
+        display: block;
+        background: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+      let dom = document.querySelector("#myCanvas");
+
+      let gl = dom.getContext("webgl");
+
+      // 1、创建着色器的源码
+      // a. 顶点着色器
+      let VERTEX_SHADER_SOURCE = `
+            // 定义 attribute 变量
+
+            attribute vec4 aPosition;
+
+            uniform mat4 mat;
+
+            void main() {
+              // 要绘制的点的坐标
+              gl_Position = mat * aPosition;
+
+              // 要绘制的点的大小
+              gl_PointSize = 10.0;
+            }
+        `;
+      // b. 片元着色器
+      let FRAGMENT_SHADER_SOURCE = `
+            void main() {
+              // 颜色
+              gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+            }
+        `;
+
+      function initShader(gl, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE) {
+        // 2、创建着色器
+        let vertexShader = gl.createShader(gl.VERTEX_SHADER); // 顶点着色器
+        let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER); // 片元着色器
+
+        // 3、给着色器指定源码
+        gl.shaderSource(vertexShader, VERTEX_SHADER_SOURCE); // 指定顶点着色器的源码
+        gl.shaderSource(fragmentShader, FRAGMENT_SHADER_SOURCE); // 指定片元着色器的源码
+
+        // 4、编译顶点着色器和片元着色器
+        gl.compileShader(vertexShader);
+        gl.compileShader(fragmentShader);
+
+        // 5、创建一个程序对象
+        let program = gl.createProgram();
+        gl.attachShader(program, vertexShader); // 添加顶点着色器
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program); // 链接程序对象
+        gl.useProgram(program); // 使用程序对象
+
+        return program;
+      }
+
+      // 初始化 program 对象
+      const program = initShader(
+        gl,
+        VERTEX_SHADER_SOURCE,
+        FRAGMENT_SHADER_SOURCE
+      );
+
+      // 获取 attribute 变量
+      let aPosition = gl.getAttribLocation(program, "aPosition");
+      let mat = gl.getUniformLocation(program, "mat");
+
+      function getScaleMatrix(x = 1, y = 1, z = 1) {
+        return new Float32Array([
+          x, 0.0, 0.0, 0.0,
+          0.0, y, 0.0, 0.0,
+          0.0, 0.0, z, 0.0,
+          0.0, 0.0, 0.0, z
+        ]);
+      }
+
+      let points = new Float32Array([-0.5, -0.5, 0.5, -0.5, 0.5, 0.5]);
+
+      // 创建位置缓冲区
+      let buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, points, gl.STATIC_DRAW);
+      gl.vertexAttribPointer(aPosition, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(aPosition);
+
+      // 6、绘制
+      let x = 0.1;
+
+      function animation() {
+        x = x + 0.01;
+
+        if (x > 1.5) {
+          x = 0.1;
+        } 
+        
+        let matrix = getScaleMatrix(x, x)
+        
+        gl.uniformMatrix4fv(mat, false, matrix);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        requestAnimationFrame(animation);
+      }
+
+      animation()
+    </script>
+  </body>
+</html>

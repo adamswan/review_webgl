@@ -31,14 +31,15 @@
 
             attribute vec4 aPosition;
 
-            attribute float aTranslate;
+            attribute float deg;
 
             void main() {
               // 要绘制的点的坐标
-              gl_Position = vec4(aPosition.x + aTranslate, aPosition.y, aPosition.z, 1.0) ;
-
-              // 要绘制的点的大小
-              gl_PointSize = 10.0;
+              // 旋转公式：
+              gl_Position.x = aPosition.x * cos(deg) - aPosition.y * sin(deg);
+              gl_Position.y = aPosition.x * sin(deg) + aPosition.y * cos(deg);
+              gl_Position.z = aPosition.z
+              gl_Position.w = aPosition.w
             }
         `;
       // b. 片元着色器
@@ -81,7 +82,7 @@
 
       // 获取 attribute 变量
       let aPosition = gl.getAttribLocation(program, "aPosition");
-      let aTranslate = gl.getAttribLocation(program, "aTranslate");
+      let deg = gl.getAttribLocation(program, "deg");
 
       // 用类型数组声明 3 个点的坐标
       let points = new Float32Array([-0.5, -0.5, 0.5, -0.5, 0.5, 0.5]);
@@ -94,18 +95,15 @@
       gl.enableVertexAttribArray(aPosition);
 
       // 6、绘制
-      let x = -1;
+      let x = 1;
 
-      setInterval(() => {
-        x = x + 0.01;
-
-        if (x > 1) {
-          x = -1;
-        }
-
-        gl.vertexAttrib1f(aTranslate, x);
+      function animate() {
+        x += -0.1;
+        gl.vertexAttrib1f(deg, x);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
-      }, 60);
+
+        requestAnimationFrame(animate);
+      }
     </script>
   </body>
 </html>

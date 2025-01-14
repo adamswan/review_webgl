@@ -31,11 +31,11 @@
 
             attribute vec4 aPosition;
 
-            attribute float aTranslate;
+            attribute float aScale;
 
             void main() {
               // 要绘制的点的坐标
-              gl_Position = vec4(aPosition.x + aTranslate, aPosition.y, aPosition.z, 1.0) ;
+              gl_Position = vec4(aPosition.x * aScale, aPosition.y, aPosition.z, 1.0);
 
               // 要绘制的点的大小
               gl_PointSize = 10.0;
@@ -81,7 +81,7 @@
 
       // 获取 attribute 变量
       let aPosition = gl.getAttribLocation(program, "aPosition");
-      let aTranslate = gl.getAttribLocation(program, "aTranslate");
+      let aScale = gl.getAttribLocation(program, "aScale");
 
       // 用类型数组声明 3 个点的坐标
       let points = new Float32Array([-0.5, -0.5, 0.5, -0.5, 0.5, 0.5]);
@@ -94,16 +94,14 @@
       gl.enableVertexAttribArray(aPosition);
 
       // 6、绘制
-      let x = -1;
+      let x = 1;
 
       setInterval(() => {
         x = x + 0.01;
-
-        if (x > 1) {
-          x = -1;
+        if (x > 2) {
+          x = 1
         }
-
-        gl.vertexAttrib1f(aTranslate, x);
+        gl.vertexAttrib1f(aScale, x);
         gl.drawArrays(gl.TRIANGLES, 0, 3);
       }, 60);
     </script>

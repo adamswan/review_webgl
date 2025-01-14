@@ -40,7 +40,9 @@
         `;
       // b. 片元着色器
       let FRAGMENT_SHADER_SOURCE = `
+            // 必须设置颜色的精度
             precision mediump float;
+            
             uniform vec4 uColor;
 
             void main() {

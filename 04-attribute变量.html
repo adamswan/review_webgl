@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+
+    <script>
+      let dom = document.querySelector("#myCanvas");
+
+      let gl = dom.getContext("webgl");
+
+      // 1、创建着色器的源码
+      // a. 顶点着色器
+      let VERTEX_SHADER_SOURCE = `
+            // 定义 attribute 变量
+            attribute vec4 aPosition;
+
+            void main() {
+                // 要绘制的点的坐标
+                gl_Position = aPosition;
+
+                // 要绘制的点的大小
+                gl_PointSize = 10.0;
+            }
+        `;
+      // b. 片元着色器
+      let FRAGMENT_SHADER_SOURCE = `
+            void main() {
+                // 颜色
+                gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            }
+        `;
+
+      function initShader(gl, VERTEX_SHADER_SOURCE, FRAGMENT_SHADER_SOURCE) {
+        // 2、创建着色器
+        let vertexShader = gl.createShader(gl.VERTEX_SHADER); // 顶点着色器
+        let fragmentShader = gl.createShader(gl.FRAGMENT_SHADER); // 片元着色器
+
+        // 3、给着色器指定源码
+        gl.shaderSource(vertexShader, VERTEX_SHADER_SOURCE); // 指定顶点着色器的源码
+        gl.shaderSource(fragmentShader, FRAGMENT_SHADER_SOURCE); // 指定片元着色器的源码
+
+        // 4、编译顶点着色器和片元着色器
+        gl.compileShader(vertexShader);
+        gl.compileShader(fragmentShader);
+
+        // 5、创建一个程序对象
+        let program = gl.createProgram();
+        gl.attachShader(program, vertexShader); // 添加顶点着色器
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program); // 链接程序对象
+        gl.useProgram(program); // 使用程序对象
+
+        return program;
+      }
+
+      // 初始化 program 对象
+      const program = initShader(
+        gl,
+        VERTEX_SHADER_SOURCE,
+        FRAGMENT_SHADER_SOURCE
+      );
+
+      // 获取 attribute 变量
+      let aPosition = gl.getAttribLocation(program, "aPosition");
+
+      // 给 attribute 变量赋值
+      gl.vertexAttrib4f(aPosition, 0.5, 0.5, 0.5, 1.0);
+
+      // 6、绘制
+      // 参数：绘制什么类型的图形、从哪个开始、使用几个顶点
+      gl.drawArrays(gl.POINTS, 0, 1);
+    </script>
+  </body>
+</html>
